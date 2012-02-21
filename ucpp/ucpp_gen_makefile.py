@@ -192,7 +192,13 @@ common_section=common_section.replace("CPP_PROJECT_WS_ROOT_DIR",CPP_PROJECT_WS_R
 file_section=""
 
 for filename in file_names:
-    this_file = """
+    if(os.path.basename(filename)=="Constants"):
+        this_file = """
+CPP_PROJECT_NAME_partialImage/$(MODE_DIR)/Objects/CPP_PROJECT_NAME/FILENAME.o : CPP_PROJECT_ROOT_DIR/FILENAME.cpp CPP_PROJECT_ROOT_DIR/"""+os.path.dirname(filename)+"""/ConstantDeclarations.h
+	$(TRACE_FLAG)if [ ! -d "`dirname "$@"`" ]; then mkdir -p "`dirname "$@"`"; fi;echo "building $@"; $(TOOL_PATH)ccppc $(DEBUGFLAGS_C++-Compiler) $(CC_ARCH_SPEC) -ansi -Wall  -MD -MP -mlongcall $(ADDED_C++FLAGS) $(IDE_INCLUDES) $(ADDED_INCLUDES) -DCPU=$(CPU) -DTOOL_FAMILY=$(TOOL_FAMILY) -DTOOL=$(TOOL) -D_WRS_KERNEL   $(DEFINES) -o "$@" -c "$<"
+"""
+    else:
+        this_file = """
 CPP_PROJECT_NAME_partialImage/$(MODE_DIR)/Objects/CPP_PROJECT_NAME/FILENAME.o : CPP_PROJECT_ROOT_DIR/FILENAME.cpp
 	$(TRACE_FLAG)if [ ! -d "`dirname "$@"`" ]; then mkdir -p "`dirname "$@"`"; fi;echo "building $@"; $(TOOL_PATH)ccppc $(DEBUGFLAGS_C++-Compiler) $(CC_ARCH_SPEC) -ansi -Wall  -MD -MP -mlongcall $(ADDED_C++FLAGS) $(IDE_INCLUDES) $(ADDED_INCLUDES) -DCPU=$(CPU) -DTOOL_FAMILY=$(TOOL_FAMILY) -DTOOL=$(TOOL) -D_WRS_KERNEL   $(DEFINES) -o "$@" -c "$<"
 
